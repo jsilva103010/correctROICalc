@@ -3,236 +3,160 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Google Ads ROI Calculator</title>
-
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <title>Google Search Ad ROI</title>
 
   <style>
     :root{
-      --bg:#0b1220;
-      --card:#0f1a33;
-      --muted:#a7b2cc;
-      --text:#eef2ff;
-      --line:rgba(255,255,255,0.10);
-      --accent:#7aa2ff;
-      --accent2:#62e6b7;
-      --warn:#ffce7a;
-      --danger:#ff7a7a;
-      --shadow: 0 10px 30px rgba(0,0,0,0.35);
-      --radius: 16px;
+      --bg0:#06121f; --bg1:#071a2d; --stroke:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92); --muted:rgba(255,255,255,.66);
+      --accent:#39a6ff; --good:#39d98a; --warn:#ffcc66; --bad:#ff5c77;
+      --radius:18px; --shadow:0 18px 55px rgba(0,0,0,.45);
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
     *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      background: radial-gradient(1200px 600px at 10% 0%, rgba(122,162,255,0.25), transparent 60%),
-                  radial-gradient(900px 500px at 90% 10%, rgba(98,230,183,0.18), transparent 55%),
-                  var(--bg);
-      color:var(--text);
-      padding: 28px 14px;
-    }
-    .wrap{ max-width:1100px; margin:0 auto; }
-    header{ display:flex; justify-content:space-between; gap:14px; margin-bottom:18px; }
-    .title{ font-size:22px; font-weight:800; }
-    .subtitle{ color:var(--muted); font-size:14px; max-width:700px; }
-    .pill{
-      border:1px solid var(--line);
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      color:var(--muted);
-    }
-    .grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:16px; }
-    @media(max-width:900px){ .grid{grid-template-columns:1fr;} header{flex-direction:column;} }
-    .card{
-      background:rgba(255,255,255,.03);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:16px;
-    }
-    h2{ font-size:15px; margin-bottom:10px; }
-    label{ font-size:12px; color:var(--muted); display:block; margin-bottom:6px; }
-    input,select,textarea{
-      width:100%;
-      padding:10px 12px;
-      background:rgba(10,16,30,.55);
-      border:1px solid var(--line);
-      color:var(--text);
-      border-radius:12px;
-    }
-    .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    @media(max-width:520px){ .row{grid-template-columns:1fr;} }
-    .help{ font-size:12px; color:rgba(167,178,204,.85); margin-top:6px; }
-    .btnbar{ display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
-    button{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:650;
-    }
-    button.primary{
-      background:rgba(122,162,255,.18);
-      border-color:rgba(122,162,255,.35);
-    }
-    .kpiGrid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .kpi{ border:1px solid var(--line); border-radius:14px; padding:12px; }
-    .kpi .name{ font-size:12px; color:var(--muted); }
-    .kpi .val{ font-size:20px; font-weight:800; }
-    .badge{
-      display:inline-flex;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      font-size:12px;
-      color:var(--muted);
-      background:rgba(255,255,255,.03);
-    }
-    .warn{ color:var(--warn); border-color:rgba(255,206,122,.35); }
-    .danger{ color:var(--danger); border-color:rgba(255,122,122,.35); }
-    table{
-      width:100%;
-      border-collapse:collapse;
-      margin-top:10px;
-      border:1px solid var(--line);
-      border-radius:12px;
-      overflow:hidden;
-    }
-    th,td{ font-size:12px; padding:10px; border-bottom:1px solid var(--line); }
-    th{ background:rgba(255,255,255,.04); color:var(--muted); }
-    .mono{ font-family:monospace; }
+    body{ margin:0; font-family:var(--sans); color:var(--text); background:linear-gradient(180deg, var(--bg0), var(--bg1)); min-height:100vh; line-height:1.5; }
+    .wrap{ max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+    
+    .header-area { margin-bottom: 32px; border-bottom: 1px solid var(--stroke); padding-bottom: 24px; }
+    .branding-header { display: none; margin-bottom: 20px; padding: 20px; background: rgba(255,255,255,.05); border-radius: var(--radius); border-left: 4px solid var(--accent); }
+    
+    .grid{ display:grid; grid-template-columns: 440px 1fr; gap: 24px; align-items: start; }
+    .panel{ border: 1px solid var(--stroke); background: rgba(255,255,255,.03); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); position: relative; }
+    
+    h2{ margin: 0 0 16px; font-size: 14px; letter-spacing:1px; color: var(--accent); text-transform: uppercase; }
+    .row{ display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .full{ grid-column: 1 / -1; }
+    
+    label{ display:block; color: var(--muted); font-size: 11px; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+    select, input, textarea{ width:100%; border-radius: 10px; border: 1px solid var(--stroke); background: rgba(8,18,33,.55); color: var(--text); padding: 10px; font-size: 14px; outline:none; transition: border 0.2s; }
+    select:focus, input:focus { border-color: var(--accent); }
+    
+    .slider-wrap { background: rgba(0,0,0,0.2); padding: 12px; border-radius: 10px; border: 1px solid var(--stroke); }
+    input[type="range"] { -webkit-appearance: none; background: transparent; cursor: pointer; width: 100%; }
+    input[type="range"]::-webkit-slider-runnable-track { height: 6px; background: rgba(255,255,255,.14); border-radius: 3px; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: var(--accent); margin-top: -6px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+    .card { background: rgba(255,255,255,.04); border: 1px solid var(--stroke); padding: 16px; border-radius: 12px; }
+    .leakage-card { border-color: rgba(255,92,119,.3); background: rgba(255,92,119,.05); }
+    .v { font-size: 26px; font-weight: 800; font-family: ui-monospace, monospace; }
+    .bad { color: var(--bad); } .good { color: var(--good); }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; background: rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; }
+    th { text-align: left; color: var(--muted); padding: 12px; border-bottom: 1px solid var(--stroke); text-transform: uppercase; font-size: 10px; }
+    td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,.05); }
+
+    .hidden { display: none; }
+
+    @media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }
   </style>
 </head>
-
 <body>
+
 <div class="wrap">
-  <header>
-    <div>
-      <div class="title">Google Ads ROI Calculator</div>
-      <div class="subtitle">Directional projections for leads, clients, CAC, and ROI.</div>
+  <div class="header-area">
+    <div id="salesBranding" class="branding-header">
+      <h1 id="displayFirm" style="margin:0; font-size: 24px;">Firm Name</h1>
+      <p style="margin:4px 0 0; color:var(--muted); font-size: 14px;">Growth Strategy & Intake Audit</p>
     </div>
-    <div class="pill" id="modePill">Mode: self serve</div>
-  </header>
+    <h1 style="margin:0;">Google Search Ad ROI</h1>
+    <p style="color:var(--muted); margin-top:4px;">Practice area benchmarks and intake performance analysis.</p>
+  </div>
 
   <div class="grid">
-    <section class="card">
-      <h2>Inputs</h2>
-
-      <label>Practice area</label>
-      <select id="practiceArea"></select>
-
-      <div style="height:10px"></div>
-
-      <label>Market size</label>
-      <select id="marketSize">
-        <option value="major">Major metro</option>
-        <option value="mid" selected>Mid size metro</option>
-        <option value="small">Smaller market</option>
-      </select>
-
-      <div style="height:10px"></div>
-
-      <label>Monthly ad spend</label>
-      <input id="budget" type="range" min="500" max="2000" step="50" value="750" />
-      <div class="help">Selected budget: <span class="mono" id="budgetLabel"></span></div>
-
-      <div style="height:10px"></div>
-
-      <label>Close rate (percent)</label>
-      <input id="closeRate" type="number" value="35" />
-
-      <div style="height:10px"></div>
-
-      <label>Average client value</label>
-      <input id="acv" type="number" value="9000" />
-
-      <div class="btnbar">
-        <button id="copyLinkBtn">Copy share link</button>
-        <button id="resetBtn">Reset</button>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>Results</h2>
-
-      <div class="kpiGrid">
-        <div class="kpi"><div class="name">Leads</div><div class="val" id="kpiLeads">–</div></div>
-        <div class="kpi"><div class="name">Clients</div><div class="val" id="kpiClients">–</div></div>
-        <div class="kpi"><div class="name">Revenue</div><div class="val" id="kpiRevenue">–</div></div>
-        <div class="kpi"><div class="name">ROI</div><div class="val" id="kpiRoi">–</div></div>
+    <div class="panel">
+      <h2>Campaign Inputs</h2>
+      
+      <div id="salesInputs" class="hidden">
+        <div class="full" style="margin-bottom:15px;">
+          <label>Prospect Firm Name</label>
+          <input id="firmName" type="text" placeholder="e.g. Burton Law" />
+        </div>
       </div>
 
-      <div id="assumptionWarnings" style="margin-top:10px;"></div>
+      <div class="row">
+        <div class="full">
+          <label>Practice Area</label>
+          <select id="practice"></select>
+        </div>
+        
+        <div class="full">
+          <label>Target City / Market</label>
+          <select id="citySelect">
+            <option value="other">Other / National Benchmark</option>
+            <option disabled>── SPECIFIC DATA ──</option>
+            <option value="SYRACUSE, NY">Syracuse, NY</option>
+            <option value="PENSACOLA, FL">Pensacola, FL</option>
+            <option value="AUGUSTA, GA">Augusta, GA</option>
+            <option value="NEW YORK CITY, NY">New York City, NY</option>
+            <option value="BOSTON, MA">Boston, MA</option>
+            <option value="MIAMI, FL">Miami, FL</option>
+            <option value="SEATTLE, WA">Seattle, WA</option>
+            <option value="DALLAS, TX">Dallas, TX</option>
+            <option value="ATLANTA, GA">Atlanta, GA</option>
+            <option value="CHICAGO, IL">Chicago, IL</option>
+            <option value="SPRINGFIELD, MO">Springfield, MO</option>
+            <option value="COLUMBIA, MO">Columbia, MO</option>
+          </select>
+        </div>
 
-      <div id="salesCta" class="badge" style="display:none; margin-top:12px;">
-        Next step: validate assumptions with real CPC data, call tracking, and intake review.
+        <div class="full" id="tierRow">
+          <label>Market Size (Benchmark)</label>
+          <select id="marketTier">
+            <option value="tier1">Tier 1 (High Cost/Metro)</option>
+            <option value="tier2" selected>Tier 2 (Mid-Market)</option>
+            <option value="tier3">Tier 3 (Low Cost)</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label>Monthly Ad Spend</label>
+          <div class="slider-wrap">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+              <span id="budgetLabel" style="font-weight:bold; color:var(--accent);">$750</span>
+              <span style="font-size:10px; color:var(--muted);">RANGE: $449 - $2,500</span>
+            </div>
+            <input type="range" id="budget" min="449" max="2500" step="50" value="750" />
+          </div>
+        </div>
+
+        <div>
+          <label>Lead Response Time</label>
+          <select id="responseTime">
+            <option value="1.0">Under 5 Minutes</option>
+            <option value="0.5">30 Minutes</option>
+            <option value="0.25">4+ Hours</option>
+            <option value="0.1">Next Day</option>
+          </select>
+        </div>
+        <div>
+          <label>Avg Case Value</label>
+          <input type="number" id="acv" value="5000" />
+        </div>
       </div>
-    </section>
-  </div>
-</div>
 
-<script>
-  const BENCH = {
-    practiceAreas:{
-      "Family Law, Divorce":{cpcLow:15,cpcHigh:60,lp:0.07},
-      "Personal Injury":{cpcLow:60,cpcHigh:180,lp:0.05}
-    },
-    market:{major:1.35,mid:1.1,small:.9}
-  };
+      <div id="notesArea" class="full hidden" style="margin-top:10px;">
+        <label>Consultant Notes</label>
+        <textarea id="consultantNotes" rows="3" placeholder="Market observations..."></textarea>
+      </div>
 
-  const $ = id => document.getElementById(id);
+      <button onclick="window.print()" style="margin-top:20px; width:100%; padding:14px; background:var(--accent); border:none; color:white; border-radius:10px; font-weight:bold; cursor:pointer;">EXPORT GROWTH AUDIT</button>
+    </div>
 
-  function updateBudgetLabel(){
-    $("budgetLabel").textContent = `USD ${Number($("budget").value).toLocaleString()}`;
-  }
+    <div class="panel">
+      <h2>Performance Projections</h2>
+      
+      <div class="row">
+        <div class="card">
+          <label>Estimated Monthly Revenue</label>
+          <div class="v good" id="outRev">$0</div>
+        </div>
+        <div class="card leakage-card">
+          <label>Revenue Leakage (Intake Gap)</label>
+          <div class="v bad" id="outLeakage">$0</div>
+        </div>
+      </div>
 
-  function run(){
-    const area = BENCH.practiceAreas[$("practiceArea").value];
-    const m = BENCH.market[$("marketSize").value];
-    const budget = Number($("budget").value);
-    const close = $("closeRate").value/100;
-    const acv = Number($("acv").value);
-    const cpc = ((area.cpcLow+area.cpcHigh)/2)*m;
-
-    const leads = (budget/cpc)*area.lp;
-    const clients = leads*close;
-    const revenue = clients*acv;
-    const roi = ((revenue-budget)/budget)*100;
-
-    $("kpiLeads").textContent = Math.round(leads);
-    $("kpiClients").textContent = clients.toFixed(1);
-    $("kpiRevenue").textContent = `USD ${Math.round(revenue).toLocaleString()}`;
-    $("kpiRoi").textContent = `${Math.round(roi)}%`;
-
-    const warn = $("assumptionWarnings");
-    warn.innerHTML="";
-    if(close>0.6){
-      warn.innerHTML+=`<div class="badge warn">Close rate above 60 percent is optimistic.</div>`;
-    }
-    if(area.lp>0.25){
-      warn.innerHTML+=`<div class="badge warn">Landing page conversion above 25 percent is uncommon.</div>`;
-    }
-  }
-
-  function init(){
-    Object.keys(BENCH.practiceAreas).forEach(p=>{
-      const o=document.createElement("option");
-      o.value=p; o.textContent=p;
-      $("practiceArea").appendChild(o);
-    });
-    updateBudgetLabel();
-    ["practiceArea","marketSize","budget","closeRate","acv"].forEach(id=>{
-      $(id).addEventListener("input",()=>{updateBudgetLabel();run();});
-    });
-    run();
-  }
-
-  init();
-</script>
-</body>
-</html>
-
+      <div class="row" style="grid-template-columns: 1fr 1fr 1fr; margin-top:15px;">
+        <div class="card"><label>Leads</label><div class="v" id="outLeads">0</div></div>
+        <div class="card"><label>New Clients</label><div class="v" id="outClients">0</div></div>
+        <div class="card"><label>Est. ROI</label><div class="v good" id="outROI">0%</div></div>
